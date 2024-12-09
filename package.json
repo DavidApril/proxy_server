@@ -2,9 +2,9 @@
 	"name": "proxy_server",
 	"version": "1.0.0",
 	"description": "A basic proxy server implementation with Nodejs",
-	"main": "main.ts",
+	"main": "src/main.ts",
 	"scripts": {
-		"start": "tsc main.ts --outDir dist && node dist/main.js"
+		"start": "tsc src/main.ts --outDir dist && node dist/main.js"
 	},
 	"repository": {
 		"type": "git",
@@ -17,6 +17,10 @@
 	},
 	"homepage": "https://github.com/DavidApril/proxy_server#readme",
 	"dependencies": {
+		"os": "^0.1.2",
 		"typescript": "^5.7.2"
+	},
+	"devDependencies": {
+		"@types/node": "^22.10.1"
 	}
 }

@@ -1,0 +1,22 @@
+{
+	"name": "proxy_server",
+	"version": "1.0.0",
+	"description": "A basic proxy server implementation with Nodejs",
+	"main": "main.ts",
+	"scripts": {
+		"start": "tsc main.ts --outDir dist && node dist/main.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DavidApril/proxy_server.git"
+	},
+	"author": "https://github.com/DavidApril",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/DavidApril/proxy_server/issues"
+	},
+	"homepage": "https://github.com/DavidApril/proxy_server#readme",
+	"dependencies": {
+		"typescript": "^5.7.2"
+	}
+}

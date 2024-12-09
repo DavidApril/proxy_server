@@ -7,8 +7,6 @@ socketServer.on('connection', (client) => {
 	client.once('data', (data) => {
 		const version = data[0];
 		const nMethods = data[1];
-		const methods = data.slice(2, 2 + nMethods);
-		const method = data[2 + nMethods];
 		console.log('Socket version: ', version);
 		client.write(Buffer.from([0x05, 0x00])); // no authentication required
 
@@ -17,8 +15,8 @@ socketServer.on('connection', (client) => {
 			const cmd = request[1];
 			const addressType = request[3];
 
-			let address: string;
-			let port: number;
+			let address: string = '';
+			let port: number = 0;
 
 			if (version !== 0x05) {
 				console.log('Unsupported version: ', version);
@@ -34,14 +32,23 @@ socketServer.on('connection', (client) => {
 
 			if (addressType === 0x01) {
 				address = request.slice(4, 8).join('.');
-				port = request.readUInt16BE(10);
+				port = request.readUInt16BE(8);
 			} else if (addressType === 0x03) {
 				const domainLenght = request[4];
 				address = request.slice(5, 5 + domainLenght).toString();
 				port = request.readUInt16BE(5 + domainLenght);
-      }
+			}
+
+			const destinationConnection = net.createConnection({ host: address, port: port }, () => {
+				console.log('connected to destination');
+				client.write(Buffer.from([0x05, 0x00, 0x00, 0x01, 0, 0, 0, 0, 0, 0]));
+				destinationConnection.pipe(client);
+				client.pipe(destinationConnection);
+			});
 		});
 	});
 });
 
-socketServer.listen(8080, '0.0.0.0');
+socketServer.listen(8080, () => {
+	console.log('Server listening on port 8080');
+});

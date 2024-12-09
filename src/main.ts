@@ -7,6 +7,10 @@ interface NetworkInterface {
 	family: string;
 }
 
+function is_not_loopback(Interface: os.NetworkInterfaceInfo) {
+	return Interface.family === 'IPv4' && !Interface.internal;
+}
+
 function detect_interfaces() {
 	const networkInterfaces = os.networkInterfaces();
 	const interfaceList: NetworkInterface[] = [];
@@ -14,12 +18,16 @@ function detect_interfaces() {
 	for (const interfaceName in networkInterfaces) {
 		const interfaces = networkInterfaces[interfaceName];
 		if (interfaces) {
-			interfaceList.push({
-				name: interfaceName,
-				address: interfaces[0].address,
-				internal: interfaces[0].internal,
-				family: interfaces[0].family,
-			});
+			for (const Interface of interfaces) {
+				if (is_not_loopback(Interface)) {
+					interfaceList.push({
+						name: interfaceName,
+						address: Interface.address,
+						internal: Interface.internal,
+						family: Interface.family,
+					});
+				}
+			}
 		}
 	}
 

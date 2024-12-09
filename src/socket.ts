@@ -1,6 +1,12 @@
 import * as net from 'net';
+import { LoadBalancer } from './load_balancer';
 
 const socketServer = net.createServer();
+const loadBalancerList = new LoadBalancer([
+	{ host: '192.168.1.100', port: 80 },
+	{ host: '192.168.1.101', port: 80 },
+	{ host: '192.168.1.102', port: 80 },
+]);
 
 socketServer.on('connection', (client) => {
 	console.log('new client connected');
@@ -39,7 +45,10 @@ socketServer.on('connection', (client) => {
 				port = request.readUInt16BE(5 + domainLenght);
 			}
 
-			const destinationConnection = net.createConnection({ host: address, port: port }, () => {
+			const targetServer = loadBalancerList.getNextServer();
+			console.log('target server host: ', targetServer.host, 'port: ', targetServer.port);
+
+			const destinationConnection = net.createConnection({ host: targetServer.host, port: targetServer.port }, () => {
 				console.log('connected to destination');
 				client.write(Buffer.from([0x05, 0x00, 0x00, 0x01, 0, 0, 0, 0, 0, 0]));
 				destinationConnection.pipe(client);
@@ -49,6 +58,6 @@ socketServer.on('connection', (client) => {
 	});
 });
 
-socketServer.listen(8080, () => {
-	console.log('Server listening on port 8080');
+socketServer.listen(8080, '0.0.0.0', () => {
+	console.log('Server on port 8080');
 });

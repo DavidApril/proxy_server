@@ -4,7 +4,7 @@
 	"description": "A basic proxy server implementation with Nodejs",
 	"main": "src/main.ts",
 	"scripts": {
-		"start": "tsc src/main.ts --outDir dist && node dist/main.js"
+		"start": "tsc src/socket.ts --outDir dist && node dist/socket.js"
 	},
 	"repository": {
 		"type": "git",
